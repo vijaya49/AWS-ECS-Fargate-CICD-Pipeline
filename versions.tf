@@ -16,7 +16,7 @@ terraform {
     use_lockfile = true # here I am using latest state locking feature of Terraform
   }
 }
-
+#assume role method
 provider "aws" {
   region = "us-east-1"
   assume_role {
