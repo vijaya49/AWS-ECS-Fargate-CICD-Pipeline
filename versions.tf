@@ -18,6 +18,16 @@ terraform {
 }
 #assume role method testing
 provider "aws" {
-  region = "us-east-1"
-  }
+  region     = "us-east-1"
+  access_key = var.aws_access_key
+  secret_key = var.aws_secret_key
 
+  assume_role {
+    role_arn     = var.assume_role_arn
+    session_name = "terraform-session"
+  }
+}
+
+variable "aws_access_key" {}
+variable "aws_secret_key" {}
+variable "assume_role_arn" {}

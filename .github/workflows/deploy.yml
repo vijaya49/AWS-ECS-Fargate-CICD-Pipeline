@@ -25,18 +25,6 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
     
-    # Debug: Print who is assuming the role
-    - name: Who am I
-      run : |
-          ROLE_ARN="${{ secrets.AWS_IAM_ROLE_ARN }}"
-          CREDS_JSON=$(aws sts assume-role --role-arn $ROLE_ARN --role-session-name github-actions --duration-seconds 3600)
-          export AWS_ACCESS_KEY_ID=$(echo $CREDS_JSON | jq -r '.Credentials.AccessKeyId')
-          export AWS_SECRET_ACCESS_KEY=$(echo $CREDS_JSON | jq -r '.Credentials.SecretAccessKey')
-          export AWS_SESSION_TOKEN=$(echo $CREDS_JSON | jq -r '.Credentials.SessionToken')
-
-          aws sts get-caller-identity
-
-
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
