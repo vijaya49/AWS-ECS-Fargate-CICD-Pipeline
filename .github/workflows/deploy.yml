@@ -28,13 +28,13 @@ jobs:
     # Debug: Print who is assuming the role
     - name: Who am I
       run : |
-        CREDS=$(aws sts assume-role --role-arn ${{ secrets.AWS_IAM_ROLE_ARN }} --role-session-name assumed-role --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]" --output text)
-        export AWS_ACCESS_KEY_ID=$(echo $CREDS | cut -f1)
-        export AWS_SECRET_ACCESS_KEY=$(echo $CREDS | cut -f2)
-        export AWS_SESSION_TOKEN=$(echo $CREDS | cut -f3)
+          ROLE_ARN="${{ secrets.AWS_IAM_ROLE_ARN }}"
+          CREDS_JSON=$(aws sts assume-role --role-arn $ROLE_ARN --role-session-name github-actions --duration-seconds 3600)
+          export AWS_ACCESS_KEY_ID=$(echo $CREDS_JSON | jq -r '.Credentials.AccessKeyId')
+          export AWS_SECRET_ACCESS_KEY=$(echo $CREDS_JSON | jq -r '.Credentials.SecretAccessKey')
+          export AWS_SESSION_TOKEN=$(echo $CREDS_JSON | jq -r '.Credentials.SessionToken')
 
-        # Debug: Print who is assuming the role
-        aws sts get-caller-identity
+          aws sts get-caller-identity
 
 
     - name: Login to Amazon ECR
