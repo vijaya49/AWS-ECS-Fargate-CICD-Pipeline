@@ -19,8 +19,10 @@ terraform {
 #assume role method
 provider "aws" {
   region = "us-east-1"
+  access_key = var.aws-access-key-id
+  secret_key = var.aws-secret-access-key
   assume_role {
-    role_arn     = var.aws-iam-role-arn
+    role_arn = var.aws-iam-role-arn
     session_name = "terraform-session"
   }
 }

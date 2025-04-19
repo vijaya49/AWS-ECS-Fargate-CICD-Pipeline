@@ -8,3 +8,11 @@ variable "aws-iam-role-arn" {
   description = "assume role arn"
   type = string
 }
+
+variable "aws-access-key-id" {
+  type = string
+}
+
+variable "aws-secret-access-key" {
+  type = string
+}
