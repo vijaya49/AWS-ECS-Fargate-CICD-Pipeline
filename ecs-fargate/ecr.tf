@@ -9,3 +9,5 @@ resource "aws_ecr_repository" "simpletimeservice" {
     prevent_destroy = false
   }
 }
+
+#delete
