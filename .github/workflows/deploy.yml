@@ -34,7 +34,7 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        docker build -t $ECR_REPOSITORY:latest -t $ECR_REPOSITORY:$IMAGE_TAG ./simple-time-service
+        docker build -t $ECR_REPOSITORY:latest -t $ECR_REPOSITORY:$IMAGE_TAG ./wedding
         docker tag $ECR_REPOSITORY:$IMAGE_TAG ${{ steps.login-ecr.outputs.registry }}/${ECR_REPOSITORY}:$IMAGE_TAG
         docker tag $ECR_REPOSITORY:latest ${{ steps.login-ecr.outputs.registry }}/${ECR_REPOSITORY}:latest
         docker push ${{ steps.login-ecr.outputs.registry }}/${ECR_REPOSITORY}:$IMAGE_TAG
