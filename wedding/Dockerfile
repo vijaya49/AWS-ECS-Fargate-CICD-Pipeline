@@ -13,4 +13,4 @@ EXPOSE 80
 # Start NGINX
 CMD ["nginx", "-g", "daemon off;"]
 
-#static web hosting
+#static web hosting##
