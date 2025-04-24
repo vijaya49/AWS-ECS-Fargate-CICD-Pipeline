@@ -10,4 +10,4 @@ resource "aws_ecr_repository" "simpletimeservice" {
   }
 }
 
-#delete
+#delete##
