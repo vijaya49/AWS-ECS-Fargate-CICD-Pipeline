@@ -32,9 +32,21 @@ jobs:
     - name: Set short commit SHA as image tag with prefix
       run: echo "IMAGE_TAG=ecs-$(echo $GITHUB_SHA | cut -c1-5)" >> $GITHUB_ENV
 
-    - name: Build and push Docker image
+    - name: Build Docker image
       run: |
         docker build -t $ECR_REPOSITORY:latest -t $ECR_REPOSITORY:$IMAGE_TAG ./wedding
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: $ECR_REPOSITORY:$IMAGE_TAG
+        format: 'table'
+        exit-code: '1'  # Fail the build if vulnerabilities are found
+        ignore-unfixed: true
+        severity: 'CRITICAL,HIGH'
+
+    - name: Tag and push Docker image
+      run: |
         docker tag $ECR_REPOSITORY:$IMAGE_TAG ${{ steps.login-ecr.outputs.registry }}/${ECR_REPOSITORY}:$IMAGE_TAG
         docker tag $ECR_REPOSITORY:latest ${{ steps.login-ecr.outputs.registry }}/${ECR_REPOSITORY}:latest
         docker push ${{ steps.login-ecr.outputs.registry }}/${ECR_REPOSITORY}:$IMAGE_TAG
@@ -47,7 +59,7 @@ jobs:
       run: terraform init
 
     - name: Terraform Format
-      run: terraform fmt 
+      run: terraform fmt
 
     - name: Terraform Validate
       run: terraform validate
