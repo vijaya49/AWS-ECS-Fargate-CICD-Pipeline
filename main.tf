@@ -8,3 +8,4 @@ module "ecs_fargate" {
   container_port      = 80
   image_tag = var.image_tag
 }
+#
