@@ -3,67 +3,138 @@ resource "aws_ecs_cluster" "main" {
 }
 
 #ECS Task definition
+# resource "aws_ecs_task_definition" "task" {
+#   family                = "${var.app_name}-task-01"
+#   execution_role_arn    = aws_iam_role.ecs_task_execution_role.arn
+#   task_role_arn         = aws_iam_role.ecs_task_role.arn
+#   network_mode          = "awsvpc"
+#   requires_compatibilities = ["FARGATE"]
+#   cpu                   = "256"
+#   memory                = "512"
+
+#   container_definitions = jsonencode([
+#   {
+#     name      = var.app_name
+#     image     = "${aws_ecr_repository.simpletimeservice.repository_url}:${var.image_tag}"
+#     cpu       = 256
+#     memory    = 512
+#     essential = true
+#     portMappings = [{
+#       containerPort = var.container_port
+#       hostPort      = var.container_port
+#       protocol      = "tcp"
+#     }]
+#     logConfiguration = {
+#       logDriver = "awslogs"
+#       options = {
+#         awslogs-group         = aws_cloudwatch_log_group.ecs_log_group.name
+#         awslogs-region        = "us-east-1"
+#         awslogs-stream-prefix = "ecs"
+#       }
+#     }
+#     mountPoints = [
+#       {
+#         sourceVolume  = "shared-volume"
+#         containerPath = "/app"
+#       }
+#     ]
+#   },
+#   {
+#     name      = "trivy-sidecar"
+#     image     = "aquasec/trivy:latest"
+#     cpu       = 128
+#     memory    = 256
+#     essential = false
+#     command   = ["sh", "-c", "trivy fs --exit-code 0 --severity HIGH,CRITICAL /app && sleep 10"]
+#     mountPoints = [
+#       {
+#         sourceVolume  = "shared-volume"
+#         containerPath = "/app"
+#       }
+#     ]
+#     logConfiguration = {
+#       logDriver = "awslogs"
+#       options = {
+#         awslogs-group         = aws_cloudwatch_log_group.ecs_log_group.name
+#         awslogs-region        = "us-east-1"
+#         awslogs-stream-prefix = "trivy"
+#       }
+#     }
+#   }
+# ])
+# # ✅ Volume definition to support shared mountPoints
+#   volume {
+#     name = "shared-volume"
+#   }
+#   depends_on = [aws_security_group.ecs_sg]
+# }
+
 resource "aws_ecs_task_definition" "task" {
-  family                = "${var.app_name}-task-01"
-  execution_role_arn    = aws_iam_role.ecs_task_execution_role.arn
-  task_role_arn         = aws_iam_role.ecs_task_role.arn
-  network_mode          = "awsvpc"
+  family                   = "static-web-host-new-task-01"
+  network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                   = "256"
-  memory                = "512"
+  cpu                      = "512"
+  memory                   = "1024"
+  execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_execution_role.arn
 
   container_definitions = jsonencode([
-  {
-    name      = var.app_name
-    image     = "${aws_ecr_repository.simpletimeservice.repository_url}:${var.image_tag}"
-    cpu       = 256
-    memory    = 512
-    essential = true
-    portMappings = [{
-      containerPort = var.container_port
-      hostPort      = var.container_port
-      protocol      = "tcp"
-    }]
-    logConfiguration = {
-      logDriver = "awslogs"
-      options = {
-        awslogs-group         = aws_cloudwatch_log_group.ecs_log_group.name
-        awslogs-region        = "us-east-1"
-        awslogs-stream-prefix = "ecs"
+    {
+      name      = var.app_name
+      image     = "${aws_ecr_repository.simpletimeservice.repository_url}:${var.image_tag}"
+      cpu       = 256
+      memory    = 512
+      essential = true
+      portMappings = [{
+        containerPort = var.container_port
+        hostPort      = var.container_port
+        protocol      = "tcp"
+      }]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.ecs_log_group.name
+          awslogs-region        = "us-east-1"
+          awslogs-stream-prefix = "ecs"
+        }
+      }
+      mountPoints = [
+        {
+          sourceVolume  = "shared-volume"
+          containerPath = "/app"
+        }
+      ]
+    },
+    {
+      name      = "trivy-sidecar"
+      image     = "aquasec/trivy:latest"
+      cpu       = 128
+      memory    = 256
+      essential = false
+      command   = ["sh", "-c", "trivy fs --exit-code 0 --severity HIGH,CRITICAL /app && sleep 10"]
+      mountPoints = [
+        {
+          sourceVolume  = "shared-volume"
+          containerPath = "/app"
+        }
+      ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.ecs_log_group.name
+          awslogs-region        = "us-east-1"
+          awslogs-stream-prefix = "trivy"
+        }
       }
     }
-    mountPoints = [
-      {
-        sourceVolume  = "shared-volume"
-        containerPath = "/app"
-      }
-    ]
-  },
-  {
-    name      = "trivy-sidecar"
-    image     = "aquasec/trivy:latest"
-    cpu       = 128
-    memory    = 256
-    essential = false
-    command   = ["sh", "-c", "trivy fs --exit-code 0 --severity HIGH,CRITICAL /app && sleep 10"]
-    mountPoints = [
-      {
-        sourceVolume  = "shared-volume"
-        containerPath = "/app"
-      }
-    ]
-    logConfiguration = {
-      logDriver = "awslogs"
-      options = {
-        awslogs-group         = aws_cloudwatch_log_group.ecs_log_group.name
-        awslogs-region        = "us-east-1"
-        awslogs-stream-prefix = "trivy"
-      }
-    }
+  ])
+
+  volume {
+    name = "shared-volume"
   }
-])
   depends_on = [aws_security_group.ecs_sg]
 }
+
 
 #ECS
 resource "aws_ecs_service" "service" {
