@@ -111,6 +111,9 @@ CMD ["./start.sh"]
 
 ## ⚙️ Setup Instructions
 
+![image](https://github.com/user-attachments/assets/3fb36242-9414-41fd-b437-5b91fbf4180e)
+
+
 ### 🐳 Docker Build
 
 To build the Docker image, run:
