@@ -111,9 +111,6 @@ CMD ["./start.sh"]
 
 ## ⚙️ Setup Instructions
 
-![image](https://github.com/user-attachments/assets/3fb36242-9414-41fd-b437-5b91fbf4180e)
-
-
 ### 🐳 Docker Build
 
 To build the Docker image, run:
@@ -309,6 +306,11 @@ This project demonstrates:
 - Deploying it to AWS ECS Fargate
 - Managing infrastructure with Terraform
 - CI/CD using GitHub Actions
+
+
+![image](https://github.com/user-attachments/assets/a7af8965-ce65-48c2-a7e5-d62c42335efd)
+
+
 
 ## 📁 Folder Structure
 
